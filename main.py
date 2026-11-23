@@ -47,6 +47,14 @@ def main() -> None:
     os.makedirs("/output", exist_ok=True)
     with open("/output/entry.txt", "w", encoding="utf-8") as handle:
         handle.write(check(LABEL))
+    # Read the file back and prove the gate holds on what was actually
+    # written, not just on the string in memory: a stray newline or a
+    # partial write would otherwise sail through unnoticed.
+    with open("/output/entry.txt", encoding="utf-8") as handle:
+        written = handle.read()
+    if written != check(LABEL):
+        raise ValueError("entry.txt does not match the checked label")
+    print("entry.txt: %d characters" % len(written))
 
 
 if __name__ == "__main__":
